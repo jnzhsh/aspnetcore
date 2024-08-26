@@ -821,6 +821,13 @@ public static partial class RequestDelegateFactory
                     $"Nested {nameof(AsParametersAttribute)} is not supported and should be used only for handler parameters.");
             }
 
+            if(parameter.ParameterType.GetInterfaces().Any(x => x.IsGenericType&& x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+            {
+                throw new NotSupportedException(
+                   $" {nameof(AsParametersAttribute)} is not supported to  complex model binding (eg IEnumerable<>) ");
+            }
+               
+            
             return BindParameterFromProperties(parameter, factoryContext);
         }
         else if (parameter.ParameterType == typeof(HttpContext))

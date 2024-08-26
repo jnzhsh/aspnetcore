@@ -2127,6 +2127,31 @@ public partial class RequestDelegateFactoryTests : LoggedTest
         Assert.Contains("An item with the same key has already been added. Key: Foo", exception.Message);
     }
 
+    [Fact]
+    public void  RequestDelegateThrowsWhenParameterWasList()
+    {
+        static void TestAction([AsParameters] List<IFormFile> arg)
+        {
+        }
+
+        var exception = Assert.Throws<NotSupportedException>(() => RequestDelegateFactory.Create(TestAction));
+        Assert.Contains("AsParametersAttribute is not supported to  complex model binding (eg IEnumerable<>)", exception.Message);
+
+    }
+
+    [Fact]
+    public void RequestDelegateThrowsWhenParameterWasDictionary()
+    {
+        // Arrange
+        static void TestAction([AsParameters] Dictionary<int, string> arg)
+        {
+        }
+
+        var exception = Assert.Throws<NotSupportedException>(() => RequestDelegateFactory.Create(TestAction));
+        Assert.Contains("AsParametersAttribute is not supported to  complex model binding (eg IEnumerable<>)", exception.Message);
+
+    }
+
     private class ParameterListWithReadOnlyProperties
     {
         public ParameterListWithReadOnlyProperties()
